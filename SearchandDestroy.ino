@@ -33,7 +33,7 @@ float IRR = 0; //right
 #define PWMR 5 //right
 
 bool rotateCW = true; //true spin means CW, false spin means CCW
-bool facingOut = false; //determines if you are facing the outer edge based on if your front IR triggered
+//bool facingOut = false; //determines if you are facing the outer edge based on if your front IR triggered
 bool detected = false; //remembers if you detected opponent on previous scan
 
 //important constants
@@ -41,9 +41,9 @@ float maxSpeed = 150; //max motor speed, max is 255
 float atkSpeed = 255;
 float detectVar = 500; //ring detection variable
 
-unsigned long searchStartTime = 0;   // The "stopwatch" memory
-int sweepTime = 600;                 // Milliseconds to sweep the first way (Adjust this!)
-bool sweepingFirstDirection = false; // Tracks if the stopwatch is currently running
+unsigned long searchStartTime = 0;   //stopwatch memory
+int sweepTime = 600;                 //milliseconds to sweep the first way (ADJUST AS NECESSARY)
+bool sweepingFirstDirection = false; //tracks if stopwatch is running
 
 
 void setup() {
@@ -115,23 +115,22 @@ void loop() {
     }*/
 
     if(close == true){        //-------------------attack (regular) 
-      //TEST MODE< TRY LOCKING ONTO OPPONENT
       detected = true;
       analogWrite(PWML, atkSpeed);
       analogWrite(PWMR, atkSpeed);
       attack();
     }else{                     //------------------------search
       if(detected == true){
-        rotateCW = !rotateCW;           // Flip direction to try and catch them
-        searchStartTime = millis();     // Click the stopwatch!
-        sweepingFirstDirection = true;  // Tell the bot we are timing a sweep
-        detected = false;               // Reset the detection flag
+        rotateCW = !rotateCW;  //flip direction 
+        searchStartTime = millis();  //start stopwatch
+        sweepingFirstDirection = true;  //tell the bot we are timing a sweep
+        detected = false;  //Reset the detection flag
       }
 
-      // 2. HAS OUR SWEEP TIMER RUN OUT?
+      //HAS OUR SWEEP TIMER RUN OUT?
       if(sweepingFirstDirection == true && (millis() - searchStartTime > sweepTime)){
-        rotateCW = !rotateCW;           // Time's up! We guessed wrong. Flip the other way.
-        sweepingFirstDirection = false; // Stop the stopwatch. Spin this way indefinitely.
+        rotateCW = !rotateCW;  //We guessed wrong. Flip the other way.
+        sweepingFirstDirection = false;  //Stop the stopwatch. Spin this way indefinitely.
       }
 
       analogWrite(PWML, maxSpeed);
